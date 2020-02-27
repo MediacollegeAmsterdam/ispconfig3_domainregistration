@@ -1,0 +1,2 @@
+# ISPConfig3 Domainregistration
+
