@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="ispconfig3_domainregistration">
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility"/>
+    <config name="testVersion" value="5.4"/>
+
+    <file>./src</file>
+    <arg name="extensions" value="php"/>
+    <arg name="basepath" value="./"/>
+
+    <rule ref="PSR2"/>
+    <rule ref="PSR12"/>
+
+    <!--
+        This rule triggers even though our testVersion is not set to PHP 7.0+, so just disable it for now
+    -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>bootstrap.php</exclude-pattern>
+    </rule>
+
+    <!--
+        This rule triggers even though our testVersion is not set to PHP 7.0+, so just disable it for now
+    -->
+    <rule ref="PSR12.Properties.ConstantVisibility.NotFound">
+        <exclude-pattern>*</exclude-pattern>
+    </rule>
+
+    <!--
+        PHP 5.4+ is allowed in the tests/* folder because that will never be part
+        of a production deployment, nor does it get autoloaded besides when running
+        the test suite.
+    -->
+    <rule ref="PHPCompatibility">
+        <exclude-pattern>/tests/*</exclude-pattern>
+    </rule>
+</ruleset>

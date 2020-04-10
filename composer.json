@@ -1,0 +1,41 @@
+{
+    "name": "mediacollege/ispconfig3_domainregistration",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "7.4.*"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "0.6.*",
+        "php-mock/php-mock-phpunit": "2.6.*",
+        "phpcompatibility/php-compatibility": "9.3.*",
+        "phpstan/phpstan": "0.12.*",
+        "phpunit/phpunit": "9.0.*",
+        "squizlabs/php_codesniffer": "3.5.*"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "autoload": {
+        "files": ["src/bootstrap.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Domainregistration\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "phpcs": "vendor/bin/phpcs",
+        "phpstan": "vendor/bin/phpstan analyse --configuration=.phpstan.neon --memory-limit=64M",
+        "phpunit": "vendor/bin/phpunit --configuration=.phpunit.xml.dist",
+        "ci": [
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ]
+    }
+}

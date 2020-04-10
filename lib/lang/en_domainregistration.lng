@@ -1,0 +1,9 @@
+<?php
+
+$wb['domain_txt'] = 'Domain';
+$wb['btn_register_txt'] = 'Register';
+$wb['domain_error_empty'] = 'Domain must not be empty.';
+$wb['domain_error_regex'] = 'Domain extension is not allowed.';
+$wb['domain_error_already_taken'] = 'Domainname is already taken.';
+$wb['limit_domainregistration_txt'] = 'You cannot register any more domainnames because you have reached the limit.';
+$wb['editing_disabled_txt'] = 'Editing of domainregistration records is disabled.';

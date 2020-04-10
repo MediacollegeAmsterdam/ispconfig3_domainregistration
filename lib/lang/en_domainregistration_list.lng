@@ -1,0 +1,9 @@
+<?php
+
+$wb['list_head_txt'] = 'Domainregistration';
+$wb['add_new_record_txt'] = 'Register new domain';
+$wb['domainregistration_id_txt'] = 'ID';
+$wb['domain_txt'] = 'Domain';
+$wb['registered_at_txt'] = 'Registered at';
+$wb['cancelled_at_txt'] = 'Cancelled at';
+$wb['client_txt'] = 'Client';
