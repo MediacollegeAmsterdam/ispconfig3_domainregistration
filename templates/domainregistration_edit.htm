@@ -1,0 +1,34 @@
+
+
+<div class='page-header'>
+  <h1><tmpl_var name="list_head_txt"></h1>
+</div>
+
+<div class="form-group">
+    <label for="domain" class="col-sm-3 control-label">{tmpl_var name='domain_txt'}</label>
+    <div class="col-sm-9">
+        <input type="text" name="domain" id="domain" value="{tmpl_var name='domain'}" class="form-control">
+    </div>
+</div>
+
+{tmpl_if name='warning_txt'}
+    <div class="form-group">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            <div class="alert alert-warning">
+                {tmpl_var name='warning_txt'}
+            </div>
+        </div>
+    </div>
+{/tmpl_if}
+
+<input type="hidden" name="id" value="{tmpl_var name='id'}">
+<input type="hidden" name="_csrf_id" id="_csrf_id" value="{tmpl_var name='_csrf_id'}" size="" maxlength="">
+<input type="hidden" name="_csrf_key" id="_csrf_key" value="{tmpl_var name='_csrf_key'}" size="" maxlength="">
+
+<div class="clear">
+    <div class="right">
+        <button class="btn btn-default formbutton-success" type="button" value="{tmpl_var name='btn_register_txt'}" data-submit-form="pageForm" data-form-action="domainregistration/domainregistration_edit.php">{tmpl_var name='btn_register_txt'}</button>
+        <button class="btn btn-default formbutton-default" type="button" value="{tmpl_var name='btn_cancel_txt'}" data-load-content="domainregistration/domainregistration_list.php">{tmpl_var name='btn_cancel_txt'}</button>
+    </div>
+</div>

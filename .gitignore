@@ -1,0 +1,4 @@
+/.build/*
+/phpcs.xml
+/phpunit.xml
+/vendor/*

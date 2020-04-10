@@ -1,0 +1,72 @@
+<div class="page-header">
+    <h1><tmpl_var name="list_head_txt"></h1>
+</div>
+
+<button class="btn btn-default formbutton-success" type="button" data-load-content="domainregistration/domainregistration_edit.php">
+    {tmpl_var name="add_new_record_txt"}
+</button>
+
+<div class="table-wrapper marginTop15">
+    <table class="table">
+    <thead class="dark form-group-sm">
+        <tr>
+            <th data-column="domain"><tmpl_var name="domain_txt"></th>
+            <th data-column="registered_at"><tmpl_var name="registered_at_txt"></th>
+            <th data-column="cancelled_at"><tmpl_var name="cancelled_at_txt"></th>
+            <tmpl_if name='is_admin'>
+                <th data-column="client"><tmpl_var name="client_txt">{tmpl_var name='sys_groupid'}</th>
+            </tmpl_if>
+            <th class="small-col text-right">{tmpl_var name='search_limit'}</th>
+        </tr>
+        <tr>
+            <td><input class="form-control" type="text" name="search_domain" value="{tmpl_var name='search_domain'}" /></td>
+            <td><input class="form-control" type="text" name="search_registered_at" value="{tmpl_var name='search_registered_at'}" /></td>
+            <td><input class="form-control" type="text" name="search_cancelled_at" value="{tmpl_var name='search_cancelled_at'}" /></td>
+            <tmpl_if name='is_admin'>
+                <td><select class="form-control" name="search_sys_groupid">{tmpl_var name='search_sys_groupid'}</select></td>
+            </tmpl_if>
+            <td class="text-right">
+                <button type="button"
+                    class="btn btn-default formbutton-default formbutton-narrow"
+                    name="Filter"
+                    id="Filter"
+                    value="{tmpl_var name='filter_txt'}"
+                    data-submit-form="pageForm"
+                    data-form-action="domainregistration/domainregistration_list.php"
+                >
+                    <span class="icon icon-filter"></span>
+                </button>
+            </td>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tmpl_loop name="records">
+            <tr>
+                <td>{tmpl_var name="domain"}</td>
+                <td>{tmpl_var name="registered_at"}</td>
+                <td>{tmpl_var name="cancelled_at"}</td>
+                <tmpl_if name='is_admin'>
+                    <td>{tmpl_var name="sys_groupid"}</td>
+                </tmpl_if>
+                <td class="text-right">
+                    <a href="http://{tmpl_var name="domain"}" target="_blank" class="btn btn-default formbutton-default formbutton-narrow"><span class="icon icon-link"></span></button>
+                </td>
+            </tr>
+        </tmpl_loop>
+        <tmpl_unless name="records">
+            <tr class="tbl_row_noresults">
+                <td colspan="<tmpl_if name='is_admin'>5</tmpl_else>4</tmpl_if>">{tmpl_var name='globalsearch_noresults_text_txt'}</td>
+            </tr>
+        </tmpl_unless>
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td colspan="<tmpl_if name='is_admin'>5</tmpl_else>4</tmpl_if>"><tmpl_var name="paging"></td>
+        </tr>
+    </tfoot>
+    </table>
+</div>
+
+
