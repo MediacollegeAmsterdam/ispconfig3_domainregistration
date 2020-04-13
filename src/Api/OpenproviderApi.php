@@ -190,7 +190,7 @@ class OpenproviderApi implements ApiInterface
      * @param string $toAddress
      * @return bool
      */
-    public function addDnsRecordA($domain, $fromHostname, $toAddress)
+    public function dnsAddRecordA($domain, $fromHostname, $toAddress)
     {
         $url = sprintf('%s/dns/zones/%s', $this->endpoint, $domain);
         $payload = [
@@ -211,6 +211,25 @@ class OpenproviderApi implements ApiInterface
         if (empty($response['data']['success'])) {
             throw new InvalidResponseException(
                 sprintf('Error while adding DNS A record. Response: %s', var_export($response, true))
+            );
+        }
+
+        return $response['data']['success'];
+    }
+
+    /**
+     * @param mixed $domain
+     * @return bool
+     */
+    public function dnsDeleteZone($domain)
+    {
+        $url = sprintf('%s/dns/zones/%s', $this->endpoint, $domain);
+
+        $response = $this->callAuthenticated(Client::METHOD_DELETE, $url);
+
+        if (empty($response['data']['success'])) {
+            throw new InvalidResponseException(
+                sprintf('Error while deleting DNS zone. Response: %s', var_export($response, true))
             );
         }
 

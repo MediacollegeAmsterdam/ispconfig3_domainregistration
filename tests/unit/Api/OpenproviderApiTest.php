@@ -192,9 +192,50 @@ final class OpenproviderApiTest extends TestCase
             ->with(Client::METHOD_PUT, '/dns/zones/bar.com')
             ->willReturn(json_encode($response));
 
-        $result = $this->subject->addDnsRecordA('bar.com', 'hostname', '1.2.3.4');
+        $result = $this->subject->dnsAddRecordA('bar.com', 'hostname', '1.2.3.4');
 
         $this->assertTrue($result);
+    }
+
+    public function testDeletesDnsZone(): void
+    {
+        $response = [
+            'code' => 0,
+            'data' => [
+                'success' => true
+            ],
+        ];
+
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->with(Client::METHOD_DELETE, '/dns/zones/foo.bar')
+            ->willReturn(json_encode($response));
+
+        $result = $this->subject->dnsDeleteZone('foo.bar');
+
+        $this->assertTrue($result);
+    }
+
+    public function testThrowsExceptionIfDnsZoneCouldNotBeDeleted(): void
+    {
+        $this->expectException(InvalidResponseException::class);
+        $this->expectExceptionMessageMatches('/^Error while deleting DNS zone. Response: /');
+
+        $response = [
+            'code' => 0,
+            'data' => [
+                'success' => false
+            ],
+        ];
+
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->with(Client::METHOD_DELETE, '/dns/zones/bar.com')
+            ->willReturn(json_encode($response));
+
+        $this->subject->dnsDeleteZone('bar.com');
     }
 
     public function testThrowsExceptionIfDnsRecordCouldNotBeAdded(): void
@@ -215,7 +256,7 @@ final class OpenproviderApiTest extends TestCase
             ->with(Client::METHOD_PUT, '/dns/zones/bar.com')
             ->willReturn(json_encode($response));
 
-        $this->subject->addDnsRecordA('bar.com', 'hostname', '1.2.3.4');
+        $this->subject->dnsAddRecordA('bar.com', 'hostname', '1.2.3.4');
     }
 
     public function testThrowsExceptionIfAuthLoginTokenIsMissing(): void

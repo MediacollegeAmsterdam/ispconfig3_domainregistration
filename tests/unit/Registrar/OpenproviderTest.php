@@ -84,10 +84,22 @@ final class OpenproviderTest extends TestCase
 
         $this->api
             ->expects($this->once())
-            ->method('addDnsRecordA')
+            ->method('dnsAddRecordA')
             ->with($domain, $fromHostname, $toAddress);
 
-        $this->subject->addDnsRecordA($domain, $fromHostname, $toAddress);
+        $this->subject->dnsAddRecordA($domain, $fromHostname, $toAddress);
+    }
+
+    public function testDeletesDnsZone(): void
+    {
+        $domain = 'foo.bar';
+
+        $this->api
+            ->expects($this->once())
+            ->method('dnsDeleteZone')
+            ->with($domain);
+
+        $this->subject->dnsDeleteZone($domain);
     }
 
     public function testRefreshesBearerTokenOnAuthenticationException(): void

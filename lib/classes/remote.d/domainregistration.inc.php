@@ -52,6 +52,7 @@ final class remoting_domainregistration extends remoting
 
         try {
             $openprovider->cancel($record['registrar_identifier']);
+            $openprovider->dnsDeleteZone($record['domain']);
         } catch (Exception $exception) {
             $response = $exception->getMessage();
         }
