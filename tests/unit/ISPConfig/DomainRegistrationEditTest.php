@@ -9,8 +9,9 @@ use PHPUnit\Framework\TestCase;
 use phpmock\phpunit\PHPMock;
 use \app;
 use \db;
-use stdClass;
 use \tform_actions;
+use \tpl;
+use stdClass;
 
 final class DomainRegistrationEditTest extends TestCase
 {
@@ -26,6 +27,7 @@ final class DomainRegistrationEditTest extends TestCase
         global $app;
         $this->app = new app();
         $this->app->db = $this->createMock(db::class);
+        $this->app->tpl = $this->createMock(tpl::class);
         $app = $this->app;
 
         $_SESSION['s']['user']['typ'] = 'user';
@@ -37,6 +39,40 @@ final class DomainRegistrationEditTest extends TestCase
         $this->exiter = $this->createMock(Exiter::class);
 
         $this->subject = new DomainregistrationEdit($this->registrar, $this->tformActions, $this->exiter);
+    }
+
+    public function testOnSubmitChecksAvailability(): void
+    {
+        $this->subject->dataRecord['domain'] = 'foo.bar';
+
+        $this->registrar
+            ->expects($this->once())
+            ->method('isAvailable');
+
+        $this->subject->onSubmit();
+    }
+
+    public function testOnSubmitSetsConfirmVar(): void
+    {
+        $this->subject->dataRecord['domain'] = 'foo.bar';
+
+        $this->registrar
+            ->expects($this->once())
+            ->method('isAvailable');
+
+        $this->subject->onSubmit();
+    }
+
+    public function testOnShowEndSetsDomainVar(): void
+    {
+        $this->subject->dataRecord['domain'] = 'foo.bar';
+
+        $this->app->tpl
+            ->expects($this->once())
+            ->method('setVar')
+            ->with('domain', 'foo.bar');
+
+        $this->subject->onShowEnd();
     }
 
     public function testOnInsertSaveChecksAvailability(): void

@@ -4,6 +4,17 @@
   <h1><tmpl_var name="list_head_txt"></h1>
 </div>
 
+{tmpl_if name='warning_txt'}
+    <div class="form-group">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            <div class="alert alert-warning" style="margin: 0">
+                {tmpl_var name='warning_txt'}
+            </div>
+        </div>
+    </div>
+{/tmpl_if}
+
 <div class="form-group">
     <label for="domain" class="col-sm-3 control-label">{tmpl_var name='domain_txt'}</label>
     <div class="col-sm-9">
@@ -11,14 +22,35 @@
     </div>
 </div>
 
-{tmpl_if name='warning_txt'}
+{tmpl_if name='domain_is_taken'}
     <div class="form-group">
         <div class="col-sm-3">&nbsp;</div>
         <div class="col-sm-9">
-            <div class="alert alert-warning">
-                {tmpl_var name='warning_txt'}
+            <div class="alert alert-danger" style="margin: 0">
+                {tmpl_var name='domain_is_taken_txt'}
             </div>
         </div>
+    </div>
+{/tmpl_if}
+
+{tmpl_if name='domain_is_available'}
+    <div class="form-group">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            <div class="alert alert-success" style="margin: 0">
+                {tmpl_var name='domain_is_available_txt'}
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            <input type="checkbox" value="1" id="confirm" name="confirm">
+            <label for="confirm" style="font-weight: normal; display: inline">
+                {tmpl_var name='confirm_txt'}
+            </label>
+        </div>
+
     </div>
 {/tmpl_if}
 
