@@ -40,6 +40,38 @@ final class DomainregistrationEdit extends tform_actions
     }
 
     /**
+     * Checks availability
+     *
+     * @return void
+     */
+    public function onSubmit()
+    {
+        global $app;
+
+        $this->ensureAvailability($this->dataRecord['domain']);
+
+        if (empty($_POST['confirm'])) {
+            $app->tpl->setVar('domain_is_available', true);
+            $this->onShow();
+            $this->exiter->doExit();
+        }
+
+        parent::onSubmit();
+    }
+
+    /**
+     * @return void
+     */
+    public function onShowEnd()
+    {
+        global $app;
+
+        $app->tpl->setVar('domain', $this->dataRecord['domain']);
+
+        parent::onShowEnd();
+    }
+
+    /**
      * - Checks availability
      * - Registers the domain and stores the registrar identifier on our side
      * - Creates a domain alias for the user's first web_domain
@@ -120,8 +152,8 @@ final class DomainregistrationEdit extends tform_actions
         global $app;
 
         if (!$this->registrar->isAvailable($domain)) {
-            $app->tform->errorMessage = $app->tform->wordbook['domain_error_already_taken'];
-            parent::onError();
+            $app->tpl->setVar('domain_is_taken', true);
+            parent::onShow();
             $this->exiter->doExit();
         }
     }
