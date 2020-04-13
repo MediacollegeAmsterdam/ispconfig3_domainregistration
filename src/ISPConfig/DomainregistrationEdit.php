@@ -40,26 +40,6 @@ final class DomainregistrationEdit extends tform_actions
     }
 
     /**
-     * Checks availability
-     *
-     * @return void
-     */
-    public function onSubmit()
-    {
-        global $app;
-
-        $this->ensureAvailability($this->dataRecord['domain']);
-
-        if (empty($_POST['confirm'])) {
-            $app->tpl->setVar('domain_is_available', true);
-            $this->onShow();
-            $this->exiter->doExit();
-        }
-
-        parent::onSubmit();
-    }
-
-    /**
      * @return void
      */
     public function onShowEnd()
@@ -84,8 +64,16 @@ final class DomainregistrationEdit extends tform_actions
     {
         global $app;
 
-        // Register domainname
         $this->ensureAvailability($this->dataRecord['domain']);
+
+        // Only proceed with registration after user has confirmed
+        if (empty($_POST['confirm'])) {
+            $app->tpl->setVar('domain_is_available', true);
+            $this->onShow();
+            $this->exiter->doExit();
+        }
+
+        // Register domainname
         $registrarIdentifier = $this->register($this->dataRecord['domain']);
 
         // Insert database record

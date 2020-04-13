@@ -41,28 +41,6 @@ final class DomainRegistrationEditTest extends TestCase
         $this->subject = new DomainregistrationEdit($this->registrar, $this->tformActions, $this->exiter);
     }
 
-    public function testOnSubmitChecksAvailability(): void
-    {
-        $this->subject->dataRecord['domain'] = 'foo.bar';
-
-        $this->registrar
-            ->expects($this->once())
-            ->method('isAvailable');
-
-        $this->subject->onSubmit();
-    }
-
-    public function testOnSubmitSetsConfirmVar(): void
-    {
-        $this->subject->dataRecord['domain'] = 'foo.bar';
-
-        $this->registrar
-            ->expects($this->once())
-            ->method('isAvailable');
-
-        $this->subject->onSubmit();
-    }
-
     public function testOnShowEndSetsDomainVar(): void
     {
         $this->subject->dataRecord['domain'] = 'foo.bar';
@@ -82,6 +60,23 @@ final class DomainRegistrationEditTest extends TestCase
         $this->registrar
             ->expects($this->once())
             ->method('isAvailable');
+
+        $this->subject->onInsertSave('sql');
+    }
+
+    public function testOnInsertSaveSetsConfirmVar(): void
+    {
+        $this->subject->dataRecord['domain'] = 'foo.bar';
+
+        $this->registrar
+            ->expects($this->once())
+            ->method('isAvailable')
+            ->willReturn(true);
+
+        $this->app->tpl
+            ->expects($this->once())
+            ->method('setVar')
+            ->with('domain_is_available', true);
 
         $this->subject->onInsertSave('sql');
     }
