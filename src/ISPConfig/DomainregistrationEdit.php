@@ -186,8 +186,8 @@ final class DomainregistrationEdit extends tform_actions
             return;
         }
 
-        $this->registrar->addDnsRecordA($domain, $domain, $ip);
-        $this->registrar->addDnsRecordA($domain, 'www', $ip);
+        $this->registrar->dnsAddRecordA($domain, $domain, $ip);
+        $this->registrar->dnsAddRecordA($domain, 'www', $ip);
     }
 
     /**

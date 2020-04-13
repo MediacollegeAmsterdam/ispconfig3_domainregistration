@@ -108,13 +108,27 @@ class Openprovider implements RegistrarInterface
      * @param string $toAddress
      * @return bool
      */
-    public function addDnsRecordA($domain, $fromHostname, $toAddress)
+    public function dnsAddRecordA($domain, $fromHostname, $toAddress)
     {
         return $this->callApi(
-            'addDnsRecordA',
+            'dnsAddRecordA',
             $domain,
             $fromHostname,
             $toAddress
+        );
+    }
+
+    /**
+     * @param string $domain
+     * @return bool
+     * @throws RuntimeException
+     * @throws InvalidResponseException
+     */
+    public function dnsDeleteZone($domain)
+    {
+        return $this->callApi(
+            'dnsDeleteZone',
+            $domain
         );
     }
 

@@ -125,7 +125,7 @@ final class DomainRegistrationEditTest extends TestCase
 
         $this->registrar
             ->expects($this->any())
-            ->method('addDnsRecordA');
+            ->method('dnsAddRecordA');
 
         $function = $this->getFunctionMock(__NAMESPACE__, 'gethostbyname');
         $function

@@ -28,5 +28,11 @@ interface RegistrarInterface
      * @param string $toAddress
      * @return bool
      */
-    public function addDnsRecordA($domain, $fromHostname, $toAddress);
+    public function dnsAddRecordA($domain, $fromHostname, $toAddress);
+
+    /**
+     * @param string $domain
+     * @return bool
+     */
+    public function dnsDeleteZone($domain);
 }
