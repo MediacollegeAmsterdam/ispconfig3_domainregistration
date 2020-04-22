@@ -115,7 +115,7 @@ final class remoting_domainregistration extends remoting
         }
 
         // Add the record owner's username to output if available
-        if (is_numeric(array_shift(array_keys($record)))) {
+        if ($this->hasMultipleResults($record)) {
             foreach ($record as &$item) {
                 $item = $this->addUsernameToRecord($item);
             }
@@ -127,6 +127,18 @@ final class remoting_domainregistration extends remoting
     }
 
     /**
+     * @param array $result
+     * @return bool
+     */
+    private function hasMultipleResults($result)
+    {
+        $arrayKeys = array_keys($result);
+        $firstArraykey = array_shift($arrayKeys);
+
+        return is_numeric($firstArraykey);
+    }
+
+    /**
      * @param array $record
      * @return array
      */
@@ -134,16 +146,26 @@ final class remoting_domainregistration extends remoting
     {
         global $app;
 
-        if (empty($record['sys_userid'])) {
+        if (empty($record['sys_groupid'])) {
             return $record;
         }
 
+        $sql = '
+            SELECT username
+            FROM client
+            LEFT JOIN sys_group ON sys_group.client_id = client.client_id
+            WHERE sys_group.groupid = ?
+        ';
+
         $user = $app->db->queryOneRecord(
-            'SELECT username FROM sys_user WHERE sys_userid = ?',
-            $record['sys_userid']
+            $sql,
+            $record['sys_groupid']
         );
 
-        $record['username'] = $user['username'];
+        $record['username'] = '';
+        if (!empty($user['username'])) {
+            $record['username'] = $user['username'];
+        }
 
         return $record;
     }
