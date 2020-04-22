@@ -81,6 +81,18 @@ final class DomainRegistrationEditTest extends TestCase
         $this->subject->onInsertSave('sql');
     }
 
+    public function testOnInsertSaveSetsReturnUrl(): void
+    {
+        $this->subject->dataRecord['domain'] = 'foo.bar';
+
+        $this->subject->onInsertSave('sql');
+
+        $this->assertEquals(
+            'foo.php?registration_success=1',
+            $_SESSION['s']['form']['return_to_url']
+        );
+    }
+
     public function testCreatesDomainAlias(): void
     {
         $this->subject->dataRecord['domain'] = 'foo.bar';
