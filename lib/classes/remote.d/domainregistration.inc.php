@@ -18,8 +18,6 @@ final class remoting_domainregistration extends remoting
      */
     public function domainregistration_get($session_id, $primary_id)
     {
-        global $app;
-
         $this->ensureAuthorized($session_id, __FUNCTION__);
 
         return $this->getDataRecord($primary_id);
@@ -110,11 +108,42 @@ final class remoting_domainregistration extends remoting
         global $app;
 
         $app->remoting_lib->loadFormDef(__DIR__ . '/../../../form/domainregistration.tform.php');
-        $record = $app->remoting_lib->getDataRecord($primaryId, 4);
+        $record = $app->remoting_lib->getDataRecord($primaryId);
 
         if (empty($record)) {
             throw new SoapFault('data_processing_error', sprintf('Record "%s" not found.', print_r($primaryId, true)));
         }
+
+        // Add the record owner's username to output if available
+        if (is_numeric(array_shift(array_keys($record)))) {
+            foreach ($record as &$item) {
+                $item = $this->addUsernameToRecord($item);
+            }
+        } else {
+            $record = $this->addUsernameToRecord($record);
+        }
+
+        return $record;
+    }
+
+    /**
+     * @param array $record
+     * @return array
+     */
+    private function addUsernameToRecord($record)
+    {
+        global $app;
+
+        if (empty($record['sys_userid'])) {
+            return $record;
+        }
+
+        $user = $app->db->queryOneRecord(
+            'SELECT username FROM sys_user WHERE sys_userid = ?',
+            $record['sys_userid']
+        );
+
+        $record['username'] = $user['username'];
 
         return $record;
     }

@@ -8,6 +8,10 @@ class tform
         'limit_domainregistration_txt' => 'limit reached',
     ];
 
+    public $formDef = [
+        'list_default' => 'foo.php',
+    ];
+
     public function getSQL($dataRecord, $tab, $operaton, $id) {}
     public function getCurrentTab() {}
 }

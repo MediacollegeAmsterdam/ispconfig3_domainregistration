@@ -2,6 +2,12 @@
     <h1><tmpl_var name="list_head_txt"></h1>
 </div>
 
+<tmpl_if name="registration_success">
+    <div class="alert alert-success">
+        {tmpl_var name="record_added_txt"}
+    </div>
+</tmpl_if>
+
 <button class="btn btn-default formbutton-success" type="button" data-load-content="domainregistration/domainregistration_edit.php">
     {tmpl_var name="add_new_record_txt"}
 </button>

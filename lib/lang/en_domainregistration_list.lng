@@ -7,3 +7,4 @@ $wb['domain_txt'] = 'Domain';
 $wb['registered_at_txt'] = 'Registered at';
 $wb['cancelled_at_txt'] = 'Cancelled at';
 $wb['client_txt'] = 'Client';
+$wb['record_added_txt'] = 'Your domainname has been registered. A new Aliasdomain was automatically created for your website. It may take a few minutes before your website becomes available under the new domainname.';

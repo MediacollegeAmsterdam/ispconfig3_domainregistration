@@ -86,6 +86,12 @@ final class DomainregistrationEdit extends tform_actions
         $this->createDomainAlias($this->dataRecord['domain']);
         $this->createDnsRecords($this->dataRecord['domain']);
 
+        // Set return URL in session
+        $_SESSION['s']['form']['return_to_url'] = sprintf(
+            '%s?registration_success=1',
+            $app->tform->formDef['list_default']
+        );
+
         return $insertId;
     }
 
