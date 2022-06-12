@@ -56,7 +56,8 @@
                     <td>{tmpl_var name="sys_groupid"}</td>
                 </tmpl_if>
                 <td class="text-right">
-                    <a href="http://{tmpl_var name="domain"}" target="_blank" class="btn btn-default formbutton-default formbutton-narrow"><span class="icon icon-link"></span></button>
+                    <a href="#" data-load-content="domainregistration/domainregistration_edit.php?id={tmpl_var name='id'}" class="btn btn-default formbutton-default formbutton-narrow">{tmpl_var name='transfer_txt'}</a>
+                    <a href="http://{tmpl_var name="domain"}" target="_blank" class="btn btn-default formbutton-default formbutton-narrow"><span class="icon icon-link"></span></a>
                 </td>
             </tr>
         </tmpl_loop>

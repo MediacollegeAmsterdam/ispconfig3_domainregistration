@@ -1,7 +1,7 @@
 <?php
 
 $form = [
-    'title' => 'Register domainname',
+    'title' => 'Domainregistration',
     'description' => '',
     'name' => 'domainregistration',
     'db_table' => 'domainregistration',

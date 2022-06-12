@@ -103,6 +103,18 @@ class Openprovider implements RegistrarInterface
     }
 
     /**
+     * @param string $registrarIdentifier
+     * @return bool
+     */
+    public function getInfo($registrarIdentifier)
+    {
+        return $this->callApi(
+            'domainGetInfo',
+            $registrarIdentifier
+        );
+    }
+
+    /**
      * @param string $domain
      * @param string $fromHostname
      * @param string $toAddress

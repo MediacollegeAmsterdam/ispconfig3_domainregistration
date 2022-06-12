@@ -28,4 +28,3 @@ $remoting = new RemotingSites();
 $exiter = new Exiter();
 $page = new DomainregistrationEdit($openprovider, $remoting, $exiter);
 $page->onLoad();
-

@@ -177,6 +177,23 @@ final class OpenproviderApiTest extends TestCase
         $this->assertEquals($response, $result);
     }
 
+    public function testGetsDomainInfo(): void
+    {
+        $response = [
+            'code' => 0,
+        ];
+
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->with(Client::METHOD_GET, '/domains/123-ABC')
+            ->willReturn(json_encode($response));
+
+        $result = $this->subject->domainGetInfo('123-ABC');
+
+        $this->assertEquals($response, $result);
+    }
+
     public function testAddsDnsARecord(): void
     {
         $response = [

@@ -134,7 +134,14 @@ final class DomainregistrationEdit extends tform_actions
     {
         global $app;
 
-        $app->error($app->tform->wordbook['editing_disabled_txt']);
+        parent::onShowEdit();
+
+        $info = $this->registrar->getInfo($this->dataRecord['registrar_identifier']);
+        $app->tpl->setVar('auth_code', $info['data']['auth_code']);
+
+        $app->tform->formDef['tabs']['domainregistration']['title'] = $app->tform->wordbook['transfer_domain_txt'];
+
+        parent::onShowEdit();
     }
 
     /**

@@ -142,13 +142,26 @@ final class DomainRegistrationEditTest extends TestCase
         $this->subject->onInsertSave('sql');
     }
 
-    public function testOnShowEditGeneratesError(): void
+    public function testOnShowEdit(): void
     {
+        $this->subject->dataRecord['registrar_identifier'] = '42';
+
+        $this->registrar
+            ->expects($this->once())
+            ->method('getInfo')
+            ->with('42')
+            ->willReturn(array('data' => array('auth_code' => '1337')));
+
+        $this->app->tpl
+            ->expects($this->once())
+            ->method('setVar')
+            ->with('auth_code', '1337');
+
         $this->subject->onShowEdit();
 
         $this->assertEquals(
-            $this->app->tform->wordbook['editing_disabled_txt'],
-            $this->app->error
+            $this->app->tform->wordbook['transfer_domain_txt'],
+            $this->app->tform->formDef['tabs']['domainregistration']['title']
         );
     }
 

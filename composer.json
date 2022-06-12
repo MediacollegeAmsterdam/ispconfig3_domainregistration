@@ -6,7 +6,7 @@
         "php": "7.4.*"
     },
     "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "0.6.*",
+        "dealerdirect/phpcodesniffer-composer-installer": "0.7.*",
         "php-mock/php-mock-phpunit": "2.6.*",
         "phpcompatibility/php-compatibility": "9.3.*",
         "phpstan/phpstan": "0.12.*",
@@ -18,7 +18,10 @@
             "*": "dist"
         },
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "autoload": {
         "files": ["src/bootstrap.php"]

@@ -185,6 +185,17 @@ class OpenproviderApi implements ApiInterface
     }
 
     /**
+     * @param string $registrarIdentifier
+     * @return array
+     */
+    public function domainGetInfo($registrarIdentifier)
+    {
+        $url = sprintf('%s/domains/%s', $this->endpoint, $registrarIdentifier);
+
+        return $this->callAuthenticated(Client::METHOD_GET, $url);
+    }
+
+    /**
      * @param string $domain
      * @param string $fromHostname
      * @param string $toAddress

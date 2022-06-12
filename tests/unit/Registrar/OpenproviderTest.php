@@ -76,6 +76,18 @@ final class OpenproviderTest extends TestCase
         $this->subject->cancel($registrarIdentifier);
     }
 
+    public function testGetInfo(): void
+    {
+        $registrarIdentifier = 'ABC-123';
+
+        $this->api
+            ->expects($this->once())
+            ->method('domainGetInfo')
+            ->with($registrarIdentifier);
+
+        $this->subject->getInfo($registrarIdentifier);
+    }
+
     public function testAddsDnsARecord(): void
     {
         $domain = 'foo.bar';

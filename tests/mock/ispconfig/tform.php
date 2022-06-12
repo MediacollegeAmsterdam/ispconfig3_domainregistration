@@ -6,6 +6,7 @@ class tform
         'domain_error_already_taken' => 'domain already taken',
         'editing_disabled_txt' => 'editing is disabled',
         'limit_domainregistration_txt' => 'limit reached',
+        'transfer_domain_txt' => 'transfer domain',
     ];
 
     public $formDef = [
