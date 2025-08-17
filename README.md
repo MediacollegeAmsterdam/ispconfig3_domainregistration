@@ -38,6 +38,20 @@ with a command like to the following:
 $ mysql -u <database user> -p <ispconfig database name> < data/sql/domainregistration.sql
 ```
 
+Furthermore, you need to enable the module in ISPConfig. Edit the file `/usr/local/ispconfig/interface/lib/config.inc.php`, you should see two lines like the following:
+
+```
+$conf['modules_available'] = 'dashboard,admin,mail,sites,monitor,client,dns,help';
+$conf['interface_modules_enabled'] = 'dashboard,mail,sites,dns,tools,help';
+```
+
+Add `domainregistration` in there so they look like this:
+
+```
+$conf['modules_available'] = 'dashboard,domainregistration,admin,mail,sites,monitor,client,dns,help';
+$conf['interface_modules_enabled'] = 'dashboard,domainregistration,mail,sites,dns,tools,help';
+```
+
 That's it, the module is installed! Make sure to grant your CP users access to the module, otherwise they
 won't be able to use it.
 
