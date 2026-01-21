@@ -38,14 +38,7 @@ with a command like to the following:
 $ mysql -u <database user> -p <ispconfig database name> < data/sql/domainregistration.sql
 ```
 
-Furthermore, you need to enable the module in ISPConfig. Edit the file `/usr/local/ispconfig/interface/lib/config.inc.php`, you should see two lines like the following:
-
-```
-$conf['modules_available'] = 'dashboard,admin,mail,sites,monitor,client,dns,help';
-$conf['interface_modules_enabled'] = 'dashboard,mail,sites,dns,tools,help';
-```
-
-Add `domainregistration` in there so they look like this:
+Furthermore, you need to enable the module in ISPConfig. Edit the file `/usr/local/ispconfig/interface/lib/config.inc.local.php`, you should add two lines like the following (copy them from config.inc.php if needed), but add 'domainregistration':
 
 ```
 $conf['modules_available'] = 'dashboard,domainregistration,admin,mail,sites,monitor,client,dns,help';
