@@ -5,6 +5,7 @@ namespace Domainregistration\Api;
 use Domainregistration\Exception\Api\AuthenticationException;
 use Domainregistration\Exception\Api\InvalidResponseException;
 use Domainregistration\Exception\Api\UnexpectedErrorException;
+use Domainregistration\Exception\Api\RequestRejectedException;
 use Domainregistration\Http\Client;
 use RuntimeException;
 
@@ -181,16 +182,33 @@ class OpenproviderApi implements ApiInterface
     {
         $url = sprintf('%s/domains/%s', $this->endpoint, $registrarIdentifier);
 
-        return $this->callAuthenticated(Client::METHOD_DELETE, $url);
+        try {
+            return $this->callAuthenticated(Client::METHOD_DELETE, $url);
+        } catch (UnexpectedErrorException $exception) {
+            // Only documented validation, permission, or policy rejections prove
+            // that DELETE was refused. Registry/internal/unknown errors can occur
+            // after a mutation; retain them as ambiguous, even with HTTP 200.
+            // https://support.openprovider.eu/hc/en-us/articles/216644928-API-Error-Codes
+            $rejections = [50, 70, 80, 81, 197, 300, 301, 302, 303, 304, 305, 306,
+                307, 308, 309, 355, 359, 366, 368, 397];
+            if (in_array($exception->getCode(), $rejections, true)) {
+                throw new RequestRejectedException($exception->getMessage(), $exception->getCode(), $exception);
+            }
+            throw $exception;
+        }
     }
 
     /**
      * @param string $registrarIdentifier
+     * @param bool $isDeleted
      * @return array
      */
-    public function domainGetInfo($registrarIdentifier)
+    public function domainGetInfo($registrarIdentifier, $isDeleted = false)
     {
         $url = sprintf('%s/domains/%s', $this->endpoint, $registrarIdentifier);
+        if ($isDeleted) {
+            $url .= '?is_deleted=true';
+        }
 
         return $this->callAuthenticated(Client::METHOD_GET, $url);
     }
@@ -268,7 +286,7 @@ class OpenproviderApi implements ApiInterface
         $rawResponse = $this->httpClient->request($method, $url, $encodedPayload, $headers);
         $decodedResponse = json_decode($rawResponse, true);
 
-        $this->ensureValidResponse($rawResponse, $decodedResponse);
+        $decodedResponse = $this->ensureValidResponse($rawResponse, $decodedResponse);
         $this->ensureSuccessfulAuthentication($rawResponse, $decodedResponse);
         $this->ensureNoErrors($rawResponse, $decodedResponse);
 
@@ -307,14 +325,14 @@ class OpenproviderApi implements ApiInterface
 
     /**
      * @param string|null $rawResponse
-     * @param array|null $decodedResponse
-     * @return void
+     * @param mixed $decodedResponse
+     * @return array
      * @throws InvalidResponseException
      */
     private function ensureValidResponse($rawResponse, $decodedResponse)
     {
-        if (null !== $decodedResponse) {
-            return;
+        if (is_array($decodedResponse)) {
+            return $decodedResponse;
         }
 
         throw new InvalidResponseException(sprintf('Raw response: %s', var_export($rawResponse, true)));
@@ -349,7 +367,8 @@ class OpenproviderApi implements ApiInterface
             return;
         }
 
-        throw new UnexpectedErrorException(sprintf('Raw response: %s', var_export($rawResponse, true)));
+        $code = isset($decodedResponse['code']) && is_int($decodedResponse['code']) ? $decodedResponse['code'] : 0;
+        throw new UnexpectedErrorException(sprintf('Raw response: %s', var_export($rawResponse, true)), $code);
     }
 
     /**
