@@ -38,6 +38,8 @@ final class ClientTest extends TestCase
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_POSTFIELDS => $data,
                 CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_TIMEOUT => 60,
             ]);
 
         $curlExec = $this->getFunctionMock(__NAMESPACE__, 'curl_exec');
@@ -47,6 +49,7 @@ final class ClientTest extends TestCase
             ->willReturn('some response');
 
         $curlError = $this->getFunctionMock(__NAMESPACE__, 'curl_error');
+        $this->getFunctionMock(__NAMESPACE__, 'curl_getinfo')->expects($this->once())->willReturn(200);
         $curlError
             ->expects($this->once())
             ->with('curl handler')
@@ -85,6 +88,8 @@ final class ClientTest extends TestCase
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_POSTFIELDS => $data,
                 CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_TIMEOUT => 60,
             ]);
 
         $curlExec = $this->getFunctionMock(__NAMESPACE__, 'curl_exec');
@@ -94,6 +99,7 @@ final class ClientTest extends TestCase
             ->willReturn(false);
 
         $curlError = $this->getFunctionMock(__NAMESPACE__, 'curl_error');
+        $this->getFunctionMock(__NAMESPACE__, 'curl_getinfo')->expects($this->once())->willReturn(0);
         $curlError
             ->expects($this->once())
             ->with('curl handler')
@@ -105,5 +111,25 @@ final class ClientTest extends TestCase
             ->willReturn('curl handler');
 
         $this->subject->request($method, $url, $data, $headers);
+    }
+
+    /** @dataProvider ambiguousStatuses */
+    public function testServerErrorsRemainAmbiguousEvenWithJsonErrorBodies(int $status): void
+    {
+        $this->getFunctionMock(__NAMESPACE__, 'curl_init')->expects($this->once())->willReturn('curl handler');
+        $this->getFunctionMock(__NAMESPACE__, 'curl_setopt_array')->expects($this->once())->willReturn(true);
+        $this->getFunctionMock(__NAMESPACE__, 'curl_exec')->expects($this->once())
+            ->willReturn('{"code":100,"desc":"Internal error"}');
+        $this->getFunctionMock(__NAMESPACE__, 'curl_error')->expects($this->once())->willReturn('');
+        $this->getFunctionMock(__NAMESPACE__, 'curl_getinfo')->expects($this->once())->willReturn($status);
+        $this->getFunctionMock(__NAMESPACE__, 'curl_close')->expects($this->once())->willReturn(null);
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode($status);
+        $this->subject->request(Client::METHOD_DELETE, '/domains/123', '', []);
+    }
+
+    public function ambiguousStatuses(): array
+    {
+        return [[500], [503], [408]];
     }
 }

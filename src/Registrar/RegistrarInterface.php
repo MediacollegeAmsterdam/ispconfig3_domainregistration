@@ -18,7 +18,7 @@ interface RegistrarInterface
 
     /**
      * @param string $domain
-     * @return bool
+     * @return array
      */
     public function cancel($domain);
 

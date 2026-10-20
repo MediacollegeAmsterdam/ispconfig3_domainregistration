@@ -4,6 +4,7 @@ namespace Domainregistration\Registrar;
 
 use Domainregistration\Api\OpenproviderApi;
 use Domainregistration\Exception\Api\AuthenticationException;
+use Domainregistration\Exception\Api\InvalidResponseException;
 use Domainregistration\Registrar\Config\OpenproviderConfig;
 use Domainregistration\Util\SettingsStore;
 use PHPUnit\Framework\TestCase;
@@ -71,7 +72,8 @@ final class OpenproviderTest extends TestCase
         $this->api
             ->expects($this->once())
             ->method('domainCancel')
-            ->with($registrarIdentifier);
+            ->with($registrarIdentifier)
+            ->willReturn(['code' => 0]);
 
         $this->subject->cancel($registrarIdentifier);
     }
@@ -83,9 +85,24 @@ final class OpenproviderTest extends TestCase
         $this->api
             ->expects($this->once())
             ->method('domainGetInfo')
-            ->with($registrarIdentifier);
+            ->with($registrarIdentifier)
+            ->willReturn(['code' => 0]);
 
         $this->subject->getInfo($registrarIdentifier);
+    }
+
+    public function testGetDeletedDomainInfo(): void
+    {
+        $this->api->expects($this->once())->method('domainGetInfo')->with('ABC-123', true)
+            ->willReturn(['code' => 0, 'data' => ['is_deleted' => true]]);
+        $this->assertTrue($this->subject->getInfo('ABC-123', true)['data']['is_deleted']);
+    }
+
+    public function testCancellationRequiresAnArrayResponse(): void
+    {
+        $this->api->method('domainCancel')->willReturn(null);
+        $this->expectException(InvalidResponseException::class);
+        $this->subject->cancel('ABC-123');
     }
 
     public function testAddsDnsARecord(): void
