@@ -92,26 +92,43 @@ class Openprovider implements RegistrarInterface
 
     /**
      * @param string $registrarIdentifier
-     * @return bool
+     * @return array
      */
     public function cancel($registrarIdentifier)
     {
-        return $this->callApi(
+        return $this->arrayResponse($this->callApi(
             'domainCancel',
             $registrarIdentifier
-        );
+        ));
     }
 
     /**
      * @param string $registrarIdentifier
-     * @return bool
+     * @param bool $isDeleted
+     * @return array
      */
-    public function getInfo($registrarIdentifier)
+    public function getInfo($registrarIdentifier, $isDeleted = false)
     {
-        return $this->callApi(
+        if ($isDeleted) {
+            return $this->arrayResponse($this->callApi('domainGetInfo', $registrarIdentifier, true));
+        }
+
+        return $this->arrayResponse($this->callApi(
             'domainGetInfo',
             $registrarIdentifier
-        );
+        ));
+    }
+
+    /**
+     * @param mixed $response
+     * @return array
+     */
+    private function arrayResponse($response)
+    {
+        if (!is_array($response)) {
+            throw new InvalidResponseException('Missing registrar response.');
+        }
+        return $response;
     }
 
     /**

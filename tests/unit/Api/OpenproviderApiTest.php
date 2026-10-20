@@ -5,6 +5,7 @@ namespace Domainregistration\Api;
 use Domainregistration\Exception\Api\AuthenticationException;
 use Domainregistration\Exception\Api\InvalidResponseException;
 use Domainregistration\Exception\Api\UnexpectedErrorException;
+use Domainregistration\Exception\Api\RequestRejectedException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Domainregistration\Http\Client;
@@ -192,6 +193,39 @@ final class OpenproviderApiTest extends TestCase
         $result = $this->subject->domainGetInfo('123-ABC');
 
         $this->assertEquals($response, $result);
+    }
+
+    public function testCancellationRejectionIsDefinite(): void
+    {
+        $this->client->method('request')->willReturn('{"code":355,"desc":"Incorrect domain deletion type"}');
+        $this->expectException(RequestRejectedException::class);
+        $this->subject->domainCancel('123-ABC');
+    }
+
+    public function testMissingCancellationCodeIsAmbiguous(): void
+    {
+        $this->client->method('request')->willReturn('{}');
+        $this->expectException(UnexpectedErrorException::class);
+        $this->subject->domainCancel('123-ABC');
+    }
+
+    public function testInternalApiErrorsRemainAmbiguous(): void
+    {
+        $this->client->method('request')->willReturn('{"code":199,"desc":"Unknown internal error"}');
+        try {
+            $this->subject->domainCancel('123-ABC');
+            $this->fail('An internal error must not confirm cancellation.');
+        } catch (UnexpectedErrorException $exception) {
+            $this->assertSame(199, $exception->getCode());
+        }
+    }
+
+    public function testReconciliationRequestsDeletedDomainObjects(): void
+    {
+        $this->client->expects($this->once())->method('request')
+            ->with(Client::METHOD_GET, '/domains/123-ABC?is_deleted=true')
+            ->willReturn('{"code":0,"data":{"is_deleted":true}}');
+        $this->assertTrue($this->subject->domainGetInfo('123-ABC', true)['data']['is_deleted']);
     }
 
     public function testAddsDnsARecord(): void

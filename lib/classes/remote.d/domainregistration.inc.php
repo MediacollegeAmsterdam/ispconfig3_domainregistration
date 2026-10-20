@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../../src/bootstrap.php';
 
 use Domainregistration\Util\Initializer;
-use \Exception;
+use Domainregistration\ISPConfig\DomainCancellation;
 
 final class remoting_domainregistration extends remoting
 {
@@ -29,7 +29,7 @@ final class remoting_domainregistration extends remoting
 
      * @param string $session_id
      * @param int|array $primary_id
-     * @return string|true
+     * @return array|true
      * @throws SoapFault
      */
     public function domainregistration_cancel($session_id, $primary_id)
@@ -40,48 +40,19 @@ final class remoting_domainregistration extends remoting
 
         $record = $this->getDataRecord($primary_id);
         $this->ensureHasRegistrarIdentifier($record);
-        $this->ensureIsNotCancelled($record);
 
         $initializer = new Initializer();
         $initializer->initializeSentry($app, $conf);
         $openprovider = $initializer->initializeOpenprovider($app, $conf);
 
-        $response = true;
-
-        try {
-            $openprovider->cancel($record['registrar_identifier']);
-            $openprovider->dnsDeleteZone($record['domain']);
-        } catch (Exception $exception) {
-            $response = $exception->getMessage();
+        if (!$openprovider) {
+            throw new SoapFault('configuration_error', 'Openprovider is not configured.');
         }
 
-        $sql = '
-            UPDATE
-                domainregistration
-            SET
-                cancelled_at = NOW()
-            WHERE
-                id = ?
-        ';
-
-        $app->db->query($sql, $record['id']);
-
-        return $response;
-    }
-
-    /**
-     * @param mixed $record
-     * @return void
-     * @throws SoapFault
-     */
-    private function ensureIsNotCancelled($record)
-    {
-        if (!empty($record['cancelled_at'])) {
-            throw new SoapFault(
-                'data_processing_error',
-                sprintf('Record "%s" was already cancelled at %s.', $record['id'], $record['cancelled_at'])
-            );
-        }
+        $cancellation = new DomainCancellation($openprovider, $app->db, function ($message) use ($app) {
+            $app->log($message, LOGLEVEL_WARN);
+        });
+        return $cancellation->cancel($record);
     }
 
     /**
@@ -111,6 +82,9 @@ final class remoting_domainregistration extends remoting
         $record = $app->remoting_lib->getDataRecord($primaryId);
 
         if (empty($record)) {
+            if (is_array($primaryId) || $primaryId == -1) {
+                return [];
+            }
             throw new SoapFault('data_processing_error', sprintf('Record "%s" not found.', print_r($primaryId, true)));
         }
 
