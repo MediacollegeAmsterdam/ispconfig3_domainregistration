@@ -24,11 +24,13 @@ final class DomainRegistrationEditTest extends TestCase
 
     public function setUp(): void
     {
-        global $app;
+        global $app, $conf;
         $this->app = new app();
         $this->app->db = $this->createMock(db::class);
         $this->app->tpl = $this->createMock(tpl::class);
         $app = $this->app;
+        $conf = ['domainregistration' => ['registration_enabled' => true]];
+        $_POST = [];
 
         $_SESSION['s']['user']['typ'] = 'user';
         $_SESSION['s']['user']['userid'] = 42;
@@ -39,6 +41,56 @@ final class DomainRegistrationEditTest extends TestCase
         $this->exiter = $this->createMock(Exiter::class);
 
         $this->subject = new DomainregistrationEdit($this->registrar, $this->tformActions, $this->exiter);
+    }
+
+    /**
+     * @dataProvider disabledRegistrationRequests
+     */
+    public function testDisabledRegistrationRejectsDirectSaves($settings, $userType, $confirmed): void
+    {
+        global $conf;
+        $conf = $settings;
+        $_SESSION['s']['user']['typ'] = $userType;
+        $_POST['confirm'] = $confirmed;
+        $this->subject->dataRecord['domain'] = 'new.example.org';
+
+        $this->registrar->expects($this->never())->method('isAvailable');
+        $this->registrar->expects($this->never())->method('registerWithComment');
+        $this->registrar->expects($this->never())->method('dnsAddRecordA');
+        $this->tformActions->expects($this->never())->method('sites_web_aliasdomain_add');
+        $this->app->db->expects($this->never())->method('query');
+
+        $this->assertNull($this->subject->onInsertSave('sql'));
+        $this->assertSame('registration disabled', $this->app->error);
+        $this->assertArrayNotHasKey('registered_at', $this->subject->dataRecord);
+    }
+
+    public function disabledRegistrationRequests(): array
+    {
+        $cases = [];
+        foreach ([[], ['domainregistration' => []], ['domainregistration' => ['registration_enabled' => false]]] as $settings) {
+            foreach (['user', 'admin'] as $userType) {
+                foreach ([0, 1] as $confirmed) {
+                    $cases[] = [$settings, $userType, $confirmed];
+                }
+            }
+        }
+        return $cases;
+    }
+
+    /**
+     * @dataProvider disabledRegistrationRequests
+     */
+    public function testDisabledRegistrationRejectsNewForm($settings, $userType, $confirmed): void
+    {
+        global $conf;
+        $conf = $settings;
+        $_SESSION['s']['user']['typ'] = $userType;
+        $this->app->db->expects($this->never())->method('query');
+
+        $this->subject->onShowNew();
+
+        $this->assertSame('registration disabled', $this->app->error);
     }
 
     public function testOnShowEndSetsDomainVar(): void
@@ -144,6 +196,8 @@ final class DomainRegistrationEditTest extends TestCase
 
     public function testOnShowEdit(): void
     {
+        global $conf;
+        $conf = [];
         $this->subject->dataRecord['registrar_identifier'] = '42';
 
         $this->registrar
@@ -169,7 +223,7 @@ final class DomainRegistrationEditTest extends TestCase
     {
         global $conf;
 
-        $conf['domainregistration'] = [];
+        $conf['domainregistration'] = ['registration_enabled' => true];
 
         $this->app->db
             ->expects($this->never())

@@ -8,9 +8,13 @@
     </div>
 </tmpl_if>
 
+<tmpl_if name="registration_enabled">
 <button class="btn btn-default formbutton-success" type="button" data-load-content="domainregistration/domainregistration_edit.php">
     {tmpl_var name="add_new_record_txt"}
 </button>
+<tmpl_else>
+<div class="alert alert-info">{tmpl_var name="registration_disabled_txt"}</div>
+</tmpl_if>
 
 <div class="table-wrapper marginTop15">
     <table class="table">

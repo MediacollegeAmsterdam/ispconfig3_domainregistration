@@ -2,6 +2,7 @@
 
 $wb['domain_txt'] = 'Domain';
 $wb['btn_register_txt'] = 'Register';
+$wb['registration_disabled_txt'] = 'New domain registrations are no longer available. You can still view and transfer existing domains.';
 $wb['domain_error_empty'] = 'Domain must not be empty.';
 $wb['domain_error_regex'] = 'Domain extension is not allowed.';
 $wb['limit_domainregistration_txt'] = 'You cannot register any more domainnames because you have reached the limit.';

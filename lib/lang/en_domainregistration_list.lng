@@ -2,6 +2,7 @@
 
 $wb['list_head_txt'] = 'Domainregistration';
 $wb['add_new_record_txt'] = 'Register new domain';
+$wb['registration_disabled_txt'] = 'New domain registrations are no longer available. You can still view and transfer existing domains.';
 $wb['domainregistration_id_txt'] = 'ID';
 $wb['domain_txt'] = 'Domain';
 $wb['registered_at_txt'] = 'Registered at';

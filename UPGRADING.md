@@ -2,6 +2,17 @@
 
 Run any database migrations in `data/sql/incremental/`.
 
+## 1.2.2 — New registrations disabled by default
+
+No database migration is required. After upgrading, the registration button is
+hidden and new registration forms/submissions are blocked by default for all
+accounts, including administrators. Existing domains, transfer codes and the
+lookup/cancellation APIs remain available for migration and cleanup.
+
+The default also applies when the setting is absent. Only an explicit boolean
+`true` in `$conf['domainregistration']['registration_enabled']` in
+`config.inc.local.php` re-enables new registrations.
+
 ## 1.2.1 — Domain cancellation
 
 The cancellation changes require no database migration. Only the existing
