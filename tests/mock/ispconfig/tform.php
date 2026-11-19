@@ -3,6 +3,7 @@
 class tform
 {
     public $wordbook = [
+        'registration_disabled_txt' => 'registration disabled',
         'domain_error_already_taken' => 'domain already taken',
         'editing_disabled_txt' => 'editing is disabled',
         'limit_domainregistration_txt' => 'limit reached',

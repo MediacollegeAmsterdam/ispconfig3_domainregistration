@@ -63,6 +63,7 @@ yet exist. This gets included from ISPConfig's `config.inc.php`. Add the followi
 
 ```
 $conf['domainregistration'] = [
+    'registration_enabled' => false, // Default: false. Only boolean true enables new registrations.
     'allowed_tlds' => 'nl|com', // Pipe-separated list of allowed domain extensions
     'max_active_domains_per_client' => 1,
     'sentry_dsn' => '', // optional
@@ -79,6 +80,14 @@ $conf['domainregistration'] = [
     ],
 ];
 ```
+
+New registrations are disabled by default, including when `registration_enabled`
+is absent. The registration button is hidden and new-form requests and direct
+registration submissions are rejected for all accounts, including administrators.
+Existing domain lists, transfer codes and lookup/cancellation APIs remain available.
+To explicitly re-enable new registrations, set `registration_enabled` to boolean
+`true` in `config.inc.local.php`. Domain limits only apply while registration is
+enabled; setting a limit to zero does not disable registration.
 
 Most configuration parameters should be self-explanatory. You need to add a Contact in your account
 which has API access. For the username and password, use the actual username and password. The legacy Openprovider XML API advised you to use their password hash, but that won't work with the new REST API

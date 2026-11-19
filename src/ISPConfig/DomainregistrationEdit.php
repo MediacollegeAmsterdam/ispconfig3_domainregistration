@@ -58,11 +58,16 @@ final class DomainregistrationEdit extends tform_actions
      * - Creates DNS records for (www.)domain.ext, pointing to the same IP address as the user's first web_domain
      *
      * @param string $sql
-     * @return int
+     * @return int|null
      */
     public function onInsertSave($sql)
     {
-        global $app;
+        global $app, $conf;
+
+        if (!RegistrationPolicy::isEnabled($conf)) {
+            $app->error($app->tform->wordbook['registration_disabled_txt']);
+            return null;
+        }
 
         $this->ensureAvailability($this->dataRecord['domain']);
 
@@ -103,6 +108,11 @@ final class DomainregistrationEdit extends tform_actions
     public function onShowNew()
     {
         global $app, $conf;
+
+        if (!RegistrationPolicy::isEnabled($conf)) {
+            $app->error($app->tform->wordbook['registration_disabled_txt']);
+            return;
+        }
 
         if (empty($conf['domainregistration']['max_active_domains_per_client'])) {
             parent::onShowNew();
